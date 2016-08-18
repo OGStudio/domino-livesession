@@ -2,8 +2,8 @@
 from pymjin2 import *
 
 MAIN_LCD_NAME        = "lcd"
-MAIN_SEQUENCE_FINISH = "esequence.default.finish"
-MAIN_SEQUENCE_START  = "esequence.default.start"
+MAIN_SEQUENCE_FINISH = "sequence.default.finish"
+MAIN_SEQUENCE_START  = "sequence.default.start"
 MAIN_SOUND_START     = "soundBuffer.default.start"
 MAIN_TILE_MOVE_UP    = "move.default.liftTile"
 MAIN_TILE_MOVE_DOWN  = "move.default.lowerTile"
@@ -130,9 +130,9 @@ class Main(object):
                     pass
                 # Another sequence.
                 else:
-                    item = "esequence.default.{0}.active".format(item)
+                    item = "sequence.default.{0}.active".format(item)
                 items.append(item)
-            self.c.set("esequence.default.$NAME.sequence", items)
+            self.c.set("sequence.default.$NAME.keys", items)
 
     def __del__(self):
         # Tear down.

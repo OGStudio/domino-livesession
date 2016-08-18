@@ -5,7 +5,7 @@ SOURCE_ACTION_DROP_TILE      = "move.default.lowerTile"
 SOURCE_ACTION_ROTATE         = "rotate.default.rotateSource"
 SOURCE_FILTER_NAME           = "filter"
 SOURCE_LEAF_PREFIX           = "sourceLeaf"
-SOURCE_SEQUENCE_SELECTION    = "esequence.default.sourceTileSelection"
+SOURCE_SEQUENCE_SELECTION    = "sequence.default.sourceTileSelection"
 SOURCE_SLOTS_NB              = 6
 SOURCE_TILE_INITIAL_POS      = "0 0 9"
 

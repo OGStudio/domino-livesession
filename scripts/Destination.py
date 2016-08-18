@@ -4,7 +4,7 @@ from pymjin2 import *
 DESTINATION_ACTION_LIFT_TILE   = "move.default.liftTile"
 DESTINATION_ACTION_ROTATE      = "rotate.default.rotateDestination"
 DESTINATION_LEAF_PREFIX        = "destinationLeaf"
-DESTINATION_SEQUENCE_SELECTION = "esequence.default.destinationTileSelection"
+DESTINATION_SEQUENCE_SELECTION = "sequence.default.destinationTileSelection"
 DESTINATION_SLOTS_NB           = 10
 
 class DestinationImpl(object):

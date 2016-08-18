@@ -8,8 +8,8 @@ FILTER_ACTION_ROTATE              = "rotate.default.rotateFilter"
 FILTER_LEAF_FILTER_ID             = 0
 FILTER_LEAF_PREFIX                = "filterLeaf"
 FILTER_SLOTS_NB                   = 3
-FILTER_SEQUENCE_ALGORITHM_FAILURE = "esequence.default.algorithmFailure"
-FILTER_SEQUENCE_ALGORITHM_SUCCESS = "esequence.default.algorithmSuccess"
+FILTER_SEQUENCE_ALGORITHM_FAILURE = "sequence.default.algorithmFailure"
+FILTER_SEQUENCE_ALGORITHM_SUCCESS = "sequence.default.algorithmSuccess"
 FILTER_TILE_INITIAL_POS           = "0 0 11"
 
 class FilterImpl(object):
