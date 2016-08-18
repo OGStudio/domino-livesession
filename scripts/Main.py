@@ -13,13 +13,10 @@ class MainImpl(object):
         self.c = c
         self.isStarted = False
         self.selectionsNb = None
-        self.fileNameAbs = None
     def __del__(self):
         self.c = None
     def displaySelectionsNb(self):
         self.c.set("lcd.$SCENE.$LCD.value", str(self.selectionsNb))
-    def onFileNameAbs(self, key, value):
-        self.fileNameAbs = value[0]
     def onSpace(self, key, value):
         print "Space pressed"
         if (self.isStarted):
@@ -92,47 +89,6 @@ class Main(object):
         self.c.provide("main.increaseSelectionsNbAndDisplayIt",
                        self.impl.setIncreaseSelectionsNbAndDisplayIt)
         self.c.provide("main.replayStartSound", self.impl.setReplayStartSound)
-
-        # Read sequence file.
-        # TODO: Move to ESequence. Make it prettier.
-        lns = None
-        self.c.listen("pathResolver.MainScript.fileNameAbs",
-                      None,
-                      self.impl.onFileNameAbs)
-        self.c.set("pathResolver.MainScript.resolveFileNameAbs",
-                   "scripts/sequences")
-        fileName = self.impl.fileNameAbs
-        with open(fileName, "r") as f:
-            lns = f.readlines()
-        # Parse the file.
-        self.c.setConst("ESEQGROUP", "default")
-        seqs = {}
-        lastSeqName = None
-        for ln in lns:
-            # Ignore lines starting with "#".
-            if (ln.startswith("#")):
-                continue
-            # Sequence name.
-            if (ln[0].isalpha()):
-                lastSeqName = ln.strip()
-                seqs[lastSeqName] = []
-            # Sequence item.
-            else:
-                seqs[lastSeqName].append(ln.strip())
-        # Create sequences.
-        for k, v in seqs.items():
-            self.c.setConst("NAME", k)
-            # Process items.
-            items = []
-            for item in v:
-                # Environment API call.
-                if ("." in item):
-                    pass
-                # Another sequence.
-                else:
-                    item = "sequence.default.{0}.active".format(item)
-                items.append(item)
-            self.c.set("sequence.default.$NAME.keys", items)
 
     def __del__(self):
         # Tear down.
