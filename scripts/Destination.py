@@ -40,6 +40,8 @@ class DestinationImpl(object):
     def getResult(self, key):
         res = 0
         for slot, tile in self.tiles.items():
+            if (tile is None):
+                continue
             self.c.setConst("TILE", tile)
             mat = self.c.get("node.$SCENE.$TILE.material")[0]
             v0 = int(mat[-2])

@@ -2,6 +2,7 @@
 from pymjin2 import *
 
 MAIN_LCD_NAME        = "lcd"
+MAIN_TIMER_NAME      = "timer"
 MAIN_SEQUENCE_FINISH = "esequence.default.finish"
 MAIN_SEQUENCE_START  = "esequence.default.start"
 MAIN_SOUND_START     = "soundBuffer.default.start"
@@ -12,12 +13,10 @@ class MainImpl(object):
     def __init__(self, c):
         self.c = c
         self.isStarted = False
-        self.selectionsNb = None
         self.fileNameAbs = None
+        self.c.set("timer.clock.enabled", "0")
     def __del__(self):
-        self.c = None
-    def displaySelectionsNb(self):
-        self.c.set("lcd.$SCENE.$LCD.value", str(self.selectionsNb))
+        self.c = None          
     def onFileNameAbs(self, key, value):
         self.fileNameAbs = value[0]
     def onSpace(self, key, value):
@@ -26,8 +25,8 @@ class MainImpl(object):
             print "The game has already been started"
             return
         self.isStarted = True
-        self.selectionsNb = 0
-        self.displaySelectionsNb()
+        time = '0-00'
+        self.c.set("timer.$SCENE.$Timer.value", str(time))
         self.c.setConst("SEQ", MAIN_SEQUENCE_START)
         self.c.set("$SEQ.active", "1")
     def setAssignFilterTileToDestination(self, key, value):
@@ -45,25 +44,31 @@ class MainImpl(object):
         self.c.set("source.removeSelectedTile", "1")
         self.c.set("filter.acceptTile", tileName)
         self.c.report("main.assignSelectedSourceTileToFilter", "0")
+    def setCallTimer(self, key, value):
+        self.c.listen("timer.clock.tick", None, self.setDisplayTime)
+        self.c.set("timer.clock.timeout", "1000")
+        self.c.set("timer.clock.enabled", "1")
     def setClearLCD(self, key, value):
         self.c.set("lcd.$SCENE.$LCD.value", "")
         self.c.report("main.clearLCD", "0")
     def setDisplayResults(self, key, value):
         dst = self.c.get("destination.result")[0]
         src = self.c.get("source.result")[0]
-        val = int(dst) - int(src)
-        self.c.set("lcd.$SCENE.$LCD.value", str(val))
+        score = int(dst) - int(src)
+        self.c.set("lcd.$SCENE.$LCD.value", str(score))
         self.c.report("main.displayResults", "0")
+    def setDisplayTime(self, key, value):
+        time = self.c.get("timer.tick")[0]
+        self.c.set("timer.$SCENE.$Timer.value", str(time))
+        self.c.set("timer.clock.enabled", "1")
+        self.c.set("timer.clock.timeout", "1000")
+        self.c.report("main.displayTime", "0")
     def setFinishTheGameIfDestinationIsFull(self, key, value):
         dstFull = self.c.get("destionation.isFull")[0]
         if (dstFull == "1"):
             self.c.setConst("SEQ", MAIN_SEQUENCE_FINISH)
             self.c.set("$SEQ.active", "1")
         self.c.report("main.finishTheGameIfDestinationIsFull", "0")
-    def setIncreaseSelectionsNbAndDisplayIt(self, key, value):
-        self.selectionsNb = self.selectionsNb + 1
-        self.displaySelectionsNb()
-        self.c.report("main.increaseSelectionsNbAndDisplayIt", "0")
     # replayStartSound.
     def setReplayStartSound(self, key, value):
         self.c.setConst("SNDSTART", MAIN_SOUND_START)
@@ -77,6 +82,7 @@ class Main(object):
         self.impl = MainImpl(self.c)
         self.c.setConst("SCENE",    sceneName)
         self.c.setConst("LCD",      MAIN_LCD_NAME)
+        self.c.setConst("Timer",      MAIN_TIMER_NAME)
         self.c.listen("input.SPACE.key", "1", self.impl.onSpace)
 
         self.c.provide("main.assignFilterTileToDestination",
@@ -87,10 +93,9 @@ class Main(object):
                        self.impl.setAssignSelectedSourceTileToFilter)
         self.c.provide("main.clearLCD",         self.impl.setClearLCD)
         self.c.provide("main.displayResults",   self.impl.setDisplayResults)
+        self.c.provide("main.callTimer",	self.impl.setCallTimer)
         self.c.provide("main.finishTheGameIfDestinationIsFull",
                        self.impl.setFinishTheGameIfDestinationIsFull)
-        self.c.provide("main.increaseSelectionsNbAndDisplayIt",
-                       self.impl.setIncreaseSelectionsNbAndDisplayIt)
         self.c.provide("main.replayStartSound", self.impl.setReplayStartSound)
 
         # Read sequence file.
