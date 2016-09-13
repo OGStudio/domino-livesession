@@ -49,7 +49,7 @@ struct LCDImpl
             else
                 setDigitValue(i, "");
     }
-};
+}
 
 struct LCD
 {
@@ -71,6 +71,7 @@ struct LCD
         delete impl;
         delete c;
     }
+}
 
 Script *SCRIPT_CREATE(const String &sceneName,
                       const String &nodeName,
